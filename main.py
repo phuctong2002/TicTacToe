@@ -10,13 +10,21 @@ def move(event):
     if matrix[int(index[0])][int(index[1])] == 0:
         if step % 2 == 1:
             event.widget.config(text="x")
+            print(event.widget)
             step = step + 1
             matrix[int(index[0])][int(index[1])] = 1
         else:
             event.widget.config(text="o")
+            print(event.widget)
             step = step + 1
             matrix[int(index[0])][int(index[1])] = 2
 
+        #     cho nay nen bat sau do roi chay luon o day di
+        # if step % 2 == 1:
+        #     event.widget.config(text="x")
+        #     step = step + 1
+        #     matrix[int(index[0])][int(index[1])] = 1
+#             den luot may di nhe
 
 def reset(frame):
     global matrix
@@ -28,6 +36,7 @@ def reset(frame):
         for j in range(COLUMN):
             matrix[i][j] = 0
     step = 0
+
 
 def create_game():
     window = tk.Tk()
@@ -49,9 +58,3 @@ def create_game():
 
 
 create_game()
-# print(window.nametowidget("label1*1"))
-# if __name__ == "__main__":
-#     window = create_game()
-
-
-
