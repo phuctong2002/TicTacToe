@@ -26,6 +26,7 @@ def move(event):
         #     matrix[int(index[0])][int(index[1])] = 1
 #             den luot may di nhe
 
+
 def reset(frame):
     global matrix
     global step
