@@ -4,14 +4,14 @@ from constant import *
 
 def check_win(board, bot):
     # Check rows
-    for row in board:
-        for col in range(len(row) - 3):
+    for row in range(ROW):
+        for col in range(COLUMN - 3):
             if board[row][col] != 0 and board[row][col] == board[row][col + 1] == board[row][col + 2] == board[row][col + 3] == bot:
                 return True
 
     # Check columns
-    for col in range(len(board[0])):
-        for row in range(len(board) - 3):
+    for col in range(COLUMN):
+        for row in range(ROW - 3):
             if board[row][col] != 0 and board[row][col] == board[row + 1][col] == board[row + 2][col] == board[row + 3][col] == bot:
                 return True
 
@@ -40,6 +40,7 @@ def evaluate_row(board, bot):
                     score += 10
                 if cell == 3:
                     score += 100
+
     return score
 
 
@@ -102,19 +103,23 @@ def get_possible_moves(board):
 
 def make_move(board, move, bot):
     if bot:
-        board[move[0], move[1]] = 2
+        board[move[0]][move[1]] = 2
     else:
-        board[move[0], move[1]] = 1
+        board[move[0]][move[1]] = 1
 
 
 def undo_make_move(board, move):
-    board[move[0], move[1]] = 0
+    board[move[0]][move[1]] = 0
 
 
 def minimax_alpha_beta(board, depth, alpha, beta, bot):
     if depth == 0:
         return evaluate(board), None
     best_move = None
+    if check_win(board, 2):
+        return 1000000, None
+    if check_win(board, 1):
+        return -1000000, None
     if bot:
         max_eval = - math.inf
         for move in get_possible_moves(board):
@@ -141,3 +146,4 @@ def minimax_alpha_beta(board, depth, alpha, beta, bot):
             if beta <= alpha:
                 break
         return min_eval, best_move
+

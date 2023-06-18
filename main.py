@@ -2,29 +2,24 @@
 from constant import *
 import tkinter as tk
 import tkinter.font as tkFont
+from algorithm import *
+from constant import *
 
 
-def move(event):
+def move(event, frame1, frame2):
     global step
     index = event.widget.winfo_name().split("*")
+    print(frame2)
     if matrix[int(index[0])][int(index[1])] == 0:
-        if step % 2 == 1:
-            event.widget.config(text="x")
-            print(event.widget)
+        if step % 2 == 0:
+            event.widget.config(text="o")
             step = step + 1
             matrix[int(index[0])][int(index[1])] = 1
-        else:
-            event.widget.config(text="o")
-            print(event.widget)
-            step = step + 1
-            matrix[int(index[0])][int(index[1])] = 2
 
-        #     cho nay nen bat sau do roi chay luon o day di
-        # if step % 2 == 1:
-        #     event.widget.config(text="x")
-        #     step = step + 1
-        #     matrix[int(index[0])][int(index[1])] = 1
-#             den luot may di nhe
+            eval, best_move = minimax_alpha_beta(matrix, 3, -math.inf, math.inf, True)
+            frame1.nametowidget(f"{best_move[0]}*{best_move[1]}").config(text="x")
+            matrix[best_move[0]][best_move[1]] = 2
+            step = step + 1
 
 
 def reset(frame):
@@ -53,7 +48,8 @@ def create_game():
     for i in range(ROW):
         for j in range(COLUMN):
             label = tk.Label(master=frame1, text="", name=f"{i}*{j}", borderwidth=1, relief="solid", bg="#ffe6ff", font=tkFont.Font(size=40))
-            label.bind("<Button-1>", move)
+            # label.bind("<Button-1>", move)
+            label.bind("<Button-1>", lambda event: move(event, frame1, frame2))
             label.place(x=20 + i * (CELL_SIZE + 1), y=10 + j * (CELL_SIZE + 1), height=CELL_SIZE + 1, width=CELL_SIZE + 1)
     window.mainloop()
 
