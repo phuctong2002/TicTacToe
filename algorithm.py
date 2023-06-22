@@ -2,92 +2,67 @@ import math
 from constant import *
 
 
-def check_win(board, bot):
+def check_map(cd):
+    for p, value in pattern:
+        if p == cd:
+            return value
+    return 0
+
+
+def check_win(board):
     # Check rows
     for row in range(ROW):
-        for col in range(COLUMN - 3):
-            if board[row][col] != 0 and board[row][col] == board[row][col + 1] == board[row][col + 2] == board[row][col + 3] == bot:
-                return True
+        for col in range(COLUMN - 4):
+            if board[row][col] != 0 and board[row][col] == board[row][col + 1] == board[row][col + 2] == board[row][col + 3] == board[row][col + 4]:
+                return 1000000000000 if board[row][col] == 1 else -1000000000000
 
     # Check columns
     for col in range(COLUMN):
-        for row in range(ROW - 3):
-            if board[row][col] != 0 and board[row][col] == board[row + 1][col] == board[row + 2][col] == board[row + 3][col] == bot:
-                return True
+        for row in range(ROW - 4):
+            if board[row][col] != 0 and board[row][col] == board[row + 1][col] == board[row + 2][col] == board[row + 3][col] == board[row + 4][col]:
+                return 1000000000000 if board[row][col] == 1 else -1000000000000
 
     # Check diagonals
-    for row in range(len(board) - 3):
-        for col in range(len(board[0]) - 3):
-            if board[row][col] != 0 and board[row][col] == board[row + 1][col + 1] == board[row + 2][col + 2] == board[row + 3][col + 3] == bot:
-                return True
+    for row in range(ROW - 4):
+        for col in range(COLUMN - 4):
+            if board[row][col] != 0 and board[row][col] == board[row + 1][col + 1] == board[row + 2][col + 2] == board[row + 3][col + 3] == board[row + 4][col + 4]:
+                return 1000000000000 if board[row][col] == 1 else -1000000000000
 
-            if board[row + 3][col] != 0 and board[row + 3][col] == board[row + 2][col + 1] == board[row + 1][col + 2] == board[row][col + 3]:
-                return True
-
-    return False
-
-
-def evaluate_row(board, bot):
-    score = 0
-    for r in range(COLUMN):
-        cell = 0
-        for c in range(ROW):
-            if board[c][r] == bot:
-                cell += 1
-            else:
-                if cell == 2:
-                    score += 10
-                if cell == 3:
-                    score += 100
-                cell = 0
-    return score
+            if board[row + 4][col] != 0 and board[row + 4][col] == board[row + 3][col + 1] == board[row + 2][col + 2] == board[row + 1][col + 3] == board[row][col + 4]:
+                return 1000000000000 if board[row][col] == 1 else -1000000000000
+    return 0
 
 
-def evaluate_diagonal(board, bot):
-    score = 0
-    checked = [[0 for _ in range(10)] for _ in range(10)]
-    for r in range(ROW - 2):
-        for c in range(COLUMN - 2):
-            if board[r][c] == 0:
-                if board[r][c] == board[r + 1][c + 1] == board[r + 2][c + 2] == bot:
-                    score += 100
-                    checked[r][c] = checked[r + 1][c + 1] = checked[r + 2][c + 2] = 1
-                elif board[r][c] == board[r + 1][c + 1] == bot:
-                    score += 10
-                    checked[r][c] = checked[r + 1][c + 1] = 1
-    return score
-
-
-def evaluate_column(board, bot):
+def evaluate_row(board):
     score = 0
     for r in range(ROW):
-        cell = 0
+        for c in range(COLUMN - 4):
+            score += check_map([board[r][c], board[r][c + 1], board[r][c + 2], board[r][c + 3], board[r][c + 4]])
+    return score
+
+
+def evaluate_diagonal(board):
+    score = 0
+    for r in range(ROW - 4):
+        for c in range(COLUMN - 4):
+            score += check_map([board[r][c], board[r + 1][c + 1], board[r + 2][c + 2], board[r + 3][c + 3], board[r + 4][c + 4]])
+            score += check_map([board[r+4][c], board[r+3][c + 1], board[r+2][c+ 2], board[r + 1][c + 3], board[r][c + 4]])
+    return score
+
+
+def evaluate_column(board):
+    score = 0
+    for r in range(ROW - 4):
         for c in range(COLUMN):
-            if board[r][c] == bot:
-                cell += 1
-            else:
-                if cell == 2:
-                    score += 10
-                if cell == 3:
-                    score += 100
-                cell = 0
+            score += check_map([board[r][c], board[r + 1][c], board[r + 2][c], board[r + 3][c], board[r + 4][c]])
     return score
 
 
 def evaluate(board):
     score = 0
-    if check_win(board, -1):
-        score -= 1000000
-        return score
-    if check_win(board, 1):
-        score += 10000000
-        return score
-    score += evaluate_row(board, 1)
-    score -= evaluate_row(board, -1)
-    score += evaluate_column(board, 1)
-    score -= evaluate_column(board, -1)
-    score += evaluate_diagonal(board, 1)
-    score -= evaluate_diagonal(board, -1)
+    score += evaluate_row(board)
+    score += evaluate_column(board)
+    score += evaluate_diagonal(board)
     return score
 
 
@@ -112,13 +87,14 @@ def undo_make_move(board, move):
 
 
 def minimax_alpha_beta(board, depth, alpha, beta, bot):
+    terminal = check_win(board)
+    if terminal == 1000000000000:
+        return 1000000000000, None
+    if terminal == -1000000000000:
+        return -1000000000000, None
     if depth == 0:
         return evaluate(board), None
     best_move = None
-    if check_win(board, 1):
-        return 1000000000000, None
-    if check_win(board, -1):
-        return -1000000000000, None
     if bot:
         max_eval = - math.inf
         for move in get_possible_moves(board):
