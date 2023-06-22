@@ -35,12 +35,11 @@ def evaluate_row(board, bot):
             if board[c][r] == bot:
                 cell += 1
             else:
-                cell = 0
                 if cell == 2:
                     score += 10
                 if cell == 3:
                     score += 100
-
+                cell = 0
     return score
 
 
@@ -67,28 +66,28 @@ def evaluate_column(board, bot):
             if board[r][c] == bot:
                 cell += 1
             else:
-                cell = 0
                 if cell == 2:
                     score += 10
                 if cell == 3:
                     score += 100
+                cell = 0
     return score
 
 
 def evaluate(board):
     score = 0
-    if check_win(board, 1):
+    if check_win(board, -1):
         score -= 1000000
         return score
-    if check_win(board, 2):
+    if check_win(board, 1):
         score += 10000000
         return score
-    score += evaluate_row(board, 2)
-    score -= evaluate_row(board, 1)
-    score += evaluate_column(board, 2)
-    score -= evaluate_column(board, 1)
-    score += evaluate_diagonal(board, 2)
-    score -= evaluate_diagonal(board, 1)
+    score += evaluate_row(board, 1)
+    score -= evaluate_row(board, -1)
+    score += evaluate_column(board, 1)
+    score -= evaluate_column(board, -1)
+    score += evaluate_diagonal(board, 1)
+    score -= evaluate_diagonal(board, -1)
     return score
 
 
@@ -103,9 +102,9 @@ def get_possible_moves(board):
 
 def make_move(board, move, bot):
     if bot:
-        board[move[0]][move[1]] = 2
-    else:
         board[move[0]][move[1]] = 1
+    else:
+        board[move[0]][move[1]] = -1
 
 
 def undo_make_move(board, move):
@@ -116,10 +115,10 @@ def minimax_alpha_beta(board, depth, alpha, beta, bot):
     if depth == 0:
         return evaluate(board), None
     best_move = None
-    if check_win(board, 2):
-        return 1000000, None
     if check_win(board, 1):
-        return -1000000, None
+        return 1000000000000, None
+    if check_win(board, -1):
+        return -1000000000000, None
     if bot:
         max_eval = - math.inf
         for move in get_possible_moves(board):

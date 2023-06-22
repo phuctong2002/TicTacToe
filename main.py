@@ -14,11 +14,11 @@ def move(event, frame1, frame2):
         if step % 2 == 0:
             event.widget.config(text="o")
             step = step + 1
-            matrix[int(index[0])][int(index[1])] = 1
+            matrix[int(index[0])][int(index[1])] = -1
 
-            eval, best_move = minimax_alpha_beta(matrix, 3, -math.inf, math.inf, True)
+            eval, best_move = minimax_alpha_beta(matrix, 2, -math.inf, math.inf, True)
             frame1.nametowidget(f"{best_move[0]}*{best_move[1]}").config(text="x")
-            matrix[best_move[0]][best_move[1]] = 2
+            matrix[best_move[0]][best_move[1]] = 1
             step = step + 1
 
 
