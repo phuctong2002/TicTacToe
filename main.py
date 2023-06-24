@@ -12,6 +12,9 @@ def move(event, frame1, frame2):
     print(frame2)
     if matrix[int(index[0])][int(index[1])] == 0:
         if step % 2 == 0:
+            tmp = check_win(matrix)
+            if abs(tmp) == 1000000000000:
+                return
             event.widget.config(text="o")
             step = step + 1
             matrix[int(index[0])][int(index[1])] = -1
