@@ -46,7 +46,7 @@ def evaluate_diagonal(board):
     for r in range(ROW - 4):
         for c in range(COLUMN - 4):
             score += check_map([board[r][c], board[r + 1][c + 1], board[r + 2][c + 2], board[r + 3][c + 3], board[r + 4][c + 4]])
-            score += check_map([board[r+4][c], board[r+3][c + 1], board[r+2][c+ 2], board[r + 1][c + 3], board[r][c + 4]])
+            score += check_map([board[r+4][c], board[r+3][c + 1], board[r+2][c + 2], board[r + 1][c + 3], board[r][c + 4]])
     return score
 
 
